@@ -1,4 +1,4 @@
-# CNN_via_TF2_low-level-API
+# CNN_via_Tensorflow2_low-level
 This project's purpose is building convolutional neural network implementation with Tensorflow2.0 low-level API only. It looks somewhat useless things because Keras layers are so easy to handle. However, I have many layers that were built in TF1 low-level API, and surely, there is no Keras layer for them. So, I have to do this, and perhaps some guys need it too.
 
 # Require
