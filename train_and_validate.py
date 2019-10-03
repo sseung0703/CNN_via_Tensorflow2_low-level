@@ -45,27 +45,21 @@ train_step, train_loss, train_accuracy, test_step, test_loss, test_accuracy = op
 summary_writer = tf.summary.create_file_writer('tmp/summaries')
 
 model(np.zeros([1]+list(train_images.shape[1:])), training = True)
-for v in model.variables:
-    print (v.name, v.initializer)
 
-for images, labels in train_ds:
-    images = pre_processing(images, is_training = True)
-    train_step(images, labels)
-    break
-#for epoch in range(train_epoch):
-#    with summary_writer.as_default():
-#        for images, labels in train_ds:
-#            images = pre_processing(images, is_training = True)
-#            train_step(images, labels)
-#        tf.summary.scalar('Categorical_loss/train', train_loss.result(), step=epoch)
-#        tf.summary.scalar('Accuracy/train', train_accuracy.result(), step=epoch)
-#            
-#        for test_images, test_labels in test_ds:
-#            images = pre_processing(images, is_training = False)
-#            test_step(test_images, test_labels)
-#        tf.summary.scalar('Categorical_loss/test', test_loss.result(), step=epoch)
-#        tf.summary.scalar('Accuracy/test', test_accuracy.result(), step=epoch)
-#            
-#    template = 'Epoch: {0:3d}, train_loss: {1:0.4f}, train_Acc.: {2:2.2f}, val loss: {3:0.4f}, val_Acc.: {4:2.2f}'
-#    print (template.format(epoch+1, train_loss.result(), train_accuracy.result()*100,
-#                                     test_loss.result(),  test_accuracy.result()*100))
+for epoch in range(train_epoch):
+    with summary_writer.as_default():
+        for images, labels in train_ds:
+            images = pre_processing(images, is_training = True)
+            train_step(images, labels)
+        tf.summary.scalar('Categorical_loss/train', train_loss.result(), step=epoch)
+        tf.summary.scalar('Accuracy/train', train_accuracy.result(), step=epoch)
+            
+        for test_images, test_labels in test_ds:
+            images = pre_processing(images, is_training = False)
+            test_step(test_images, test_labels)
+        tf.summary.scalar('Categorical_loss/test', test_loss.result(), step=epoch)
+        tf.summary.scalar('Accuracy/test', test_accuracy.result(), step=epoch)
+            
+    template = 'Epoch: {0:3d}, train_loss: {1:0.4f}, train_Acc.: {2:2.2f}, val loss: {3:0.4f}, val_Acc.: {4:2.2f}'
+    print (template.format(epoch+1, train_loss.result(), train_accuracy.result()*100,
+                                     test_loss.result(),  test_accuracy.result()*100))
