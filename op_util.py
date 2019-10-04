@@ -31,6 +31,14 @@ def Optimizer(model, LR):
             
             test_loss(loss)
             test_accuracy(labels, predictions)
-        
         return train_step, train_loss, train_accuracy, test_step, test_loss, test_accuracy
-        
+            
+
+def learning_rate_scheduler(Learning_rate, epochs, decay_point, decay_rate):
+    with tf.variable_scope('learning_rate_scheduler'):
+        e, ie, te = epochs
+        for i, dp in enumerate(decay_point):
+            Learning_rate = tf.cond(tf.greater_equal(e, ie + int(te*dp)), lambda : Learning_rate*decay_rate, 
+                                                                          lambda : Learning_rate)
+        tf.summary.scalar('learning_rate', Learning_rate)
+        return Learning_rate
