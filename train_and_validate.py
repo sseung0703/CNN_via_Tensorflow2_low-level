@@ -34,7 +34,6 @@ model = ResNet.Model(num_layer = 18, weight_decay = weight_decay, num_class = np
 tf.summary.trace_on(graph=True, profiler=True)
 LR = op_util.learning_rate_scheduler(Learning_rate, [epoch, train_epoch], [0.3, 0.6, 0.8], 0.2)
 train_step, train_loss, train_accuracy, test_step, test_loss, test_accuracy = op_util.Optimizer(model, Learning_rate)
-<<<<<<< Updated upstream
 summary_writer = tf.summary.create_file_writer('tmp/summaries')
 
 model(np.zeros([1]+list(train_images.shape[1:])), training = True)
