@@ -5,11 +5,12 @@ This project's purpose is building convolutional neural network implementation w
 - Tensorflow > 2.0
 
 # Contents
-- tcl.py
+- nets/tcl.py
     - Build a custom layer and add trainable or untrainable parameters.
     - Add regularization for each trainable parameters.
     - Define update function for the moving mean and the moving standard deviation.
     - Conditioning for training and inference phase.
+    - Prototype of arg_scope. (will be updated)
     
 - op_util.py
     - Define a loss function with regularization losses.
@@ -21,8 +22,13 @@ This project's purpose is building convolutional neural network implementation w
     - Do train and validate.
     - Visualize the log via Tensorboard.
 
+- nets/ResNet.py
+    - Build a custom model via custom layers.
+    - How to use implemented arg_scope
+
 # To do
 - Write Readme and milestones.
 - Codes to save and load models without a checkpoint.
-- Make the example networks such as ResNet, WResNet.
+- Improve readability of a custom model.
+- Implement learning rate scheduler.
 - Find more things to do...
