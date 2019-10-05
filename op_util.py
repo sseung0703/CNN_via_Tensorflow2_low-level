@@ -33,12 +33,20 @@ def Optimizer(model, LR):
             test_accuracy(labels, predictions)
         return train_step, train_loss, train_accuracy, test_step, test_loss, test_accuracy
             
-
-def learning_rate_scheduler(Learning_rate, epochs, decay_point, decay_rate):
-    with tf.variable_scope('learning_rate_scheduler'):
-        e, ie, te = epochs
-        for i, dp in enumerate(decay_point):
-            Learning_rate = tf.cond(tf.greater_equal(e, ie + int(te*dp)), lambda : Learning_rate*decay_rate, 
-                                                                          lambda : Learning_rate)
-        tf.summary.scalar('learning_rate', Learning_rate)
-        return Learning_rate
+class learning_rate_scheduler(tf.keras.layers.Layer):
+    def __init__(self, Learning_rate, train_epoch, decay_point, decay_rate):
+        super(learning_rate_scheduler, self).__init__()
+        self.train_epoch = train_epoch
+        self.decay_point = decay_point
+        self.decay_rate = decay_rate
+        self.LR = self.add_weight(name  = 'learning_rate', trainable = False, shape = [],
+                                  initializer=tf.constant_initializer(Learning_rate))
+    
+    def call(self, epoch):
+        super(learning_rate_scheduler, self).call(epoch)
+        epoch = tf.cast(epoch, tf.float32)
+        for i, dp in enumerate(self.decay_point):
+            LR = tf.cond(tf.greater_equal(epoch, self.train_epoch*dp), lambda : self.LR*self.decay_rate, 
+                                                                       lambda : self.LR)
+        self.LR.assign(LR)
+        return self.LR

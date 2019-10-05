@@ -9,6 +9,7 @@ def arg_scope(func):
     return func_with_args
 
 class Conv2d(tf.keras.layers.Layer):
+    @arg_scope
     def __init__(self, kernel_size, num_outputs, strides = 1, dilations = 1, padding = 'SAME',
                  kernel_initializer = tf.keras.initializers.VarianceScaling(),
                  kernel_regularizer = None,

@@ -16,14 +16,11 @@ def Cifar10(home_path, model_name):
         with tf.name_scope('preprocessing'):
             image = tf.cast(image, tf.float32)
             image = (image-128)/128
-            def augmentation(image):
+            if is_training:
                 image = tf.image.random_flip_left_right(image)
                 sz = tf.shape(image)
                 image = tf.pad(image, [[0,0],[4,4],[4,4],[0,0]], 'REFLECT')
                 image = tf.image.random_crop(image,sz)
-                return image
-            if is_training:
-                image = augmentation(image)
         return image
     
     return train_images, train_labels, val_images, val_labels, pre_processing
