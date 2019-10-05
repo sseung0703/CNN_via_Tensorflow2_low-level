@@ -16,6 +16,7 @@ This project's purpose is building convolutional neural network implementation w
     - Define a loss function with regularization losses.
     - Build optimizer with computing and applying gradients.
     - Define steps for training and inference.
+    - Learning rate scheduler
     
 - train_and_validate.py
     - Load dataset, model, and optimizer.
@@ -30,5 +31,4 @@ This project's purpose is building convolutional neural network implementation w
 - Write Readme and milestones.
 - Codes to save and load models without a checkpoint.
 - Improve readability of a custom model.
-- Implement learning rate scheduler.
 - Find more things to do...
