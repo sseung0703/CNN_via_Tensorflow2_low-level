@@ -19,11 +19,15 @@ This project's purpose is building convolutional neural network implementation w
     - Learning rate scheduler
     
 - train_and_validate.py
-    - Load dataset, model, and optimizer.
+    - Load dataset, pre_processing algorithn, model, and optimizer.
     - Do train and validate.
     - Visualize the log via Tensorboard.
-
-- nets/ResNet.py
+    
+- dataloader.py
+    - Load dataset
+    - Define pre-processing algorithm.
+    
+- nets/ResNet.py and WResNet.py
     - Build a custom model via custom layers.
     - How to use implemented arg_scope
 
