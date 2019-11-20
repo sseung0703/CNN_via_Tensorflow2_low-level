@@ -6,7 +6,6 @@ class Model(tf.keras.Model):
         super(Model, self).__init__(num_layer, weight_decay, num_class)
         def kwargs(**kwargs):
             return kwargs
-
         setattr(tcl.Conv2d, 'pre_defined', kwargs(kernel_regularizer = tf.keras.regularizers.l2(weight_decay),
                                                   use_biases = False, activation_fn = None))
         setattr(tcl.FC, 'pre_defined', kwargs(kernel_regularizer = tf.keras.regularizers.l2(weight_decay),
@@ -38,14 +37,13 @@ class Model(tf.keras.Model):
                             self.resnet_layers[nb_name + '/conv2'] = tcl.Conv2d([1,1], depth, strides = strides)
             self.resnet_layers['FC'] = tcl.FC(num_class)
                         
-    def call(self, x):
-        self.net_name = 'ResNet'
+    def call(self, x, training=None):
         with tf.name_scope(self.net_name):
             x = self.resnet_layers[self.net_name + '/conv0'](x)
             x = self.resnet_layers[self.net_name + '/bn0'](x)
             for i, (nb_resnet_layers, depth, stride) in enumerate(zip(self.net_args['nb_resnet_layers'], 
-                                                               self.net_args['depth'],
-                                                               self.net_args['strides'])):
+                                                                      self.net_args['depth'],
+                                                                      self.net_args['strides'])):
                 for j in range(nb_resnet_layers):           
                     block_name = '/BasicBlock%d.%d'%(i,j)
                     with tf.name_scope(block_name[1:]):
@@ -53,9 +51,9 @@ class Model(tf.keras.Model):
                         if i != 0:
                             stride = 1
                             conv = self.resnet_layers[nb_name + '/conv0'](x)
-                            conv = self.resnet_layers[nb_name +   '/bn0'](conv)
+                            conv = self.resnet_layers[nb_name +   '/bn0'](conv, training = training)
                             conv = self.resnet_layers[nb_name + '/conv1'](conv)
-                            conv = self.resnet_layers[nb_name +   '/bn1'](conv)
+                            conv = self.resnet_layers[nb_name +   '/bn1'](conv, training = training)
                             
                             if stride > 1 or depth != self.net_args['depth'][max(0,i-1)]:
                                 x = self.resnet_layers[nb_name + '/conv2'](x)

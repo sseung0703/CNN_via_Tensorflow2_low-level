@@ -4,14 +4,13 @@ def arg_scope(func):
         if hasattr(self, 'pre_defined'):
             for k in self.pre_defined.keys():
                 kwargs[k] = self.pre_defined[k]
-            
         return func(self, *args, **kwargs)
     return func_with_args
 
 class Conv2d(tf.keras.layers.Layer):
     @arg_scope
     def __init__(self, kernel_size, num_outputs, strides = 1, dilations = 1, padding = 'SAME',
-                 kernel_initializer = tf.keras.initializers.VarianceScaling(),
+                 kernel_initializer = tf.keras.initializers.VarianceScaling(scale = 2., mode='fan_out'),
                  kernel_regularizer = None,
                  use_biases = True,
                  biases_initializer  = tf.keras.initializers.Zeros(),
@@ -59,12 +58,12 @@ class Conv2d(tf.keras.layers.Layer):
 class FC(tf.keras.layers.Layer):
     @arg_scope
     def __init__(self, num_outputs, 
-                 kernel_initializer = tf.keras.initializers.VarianceScaling(),
+                 kernel_initializer = tf.keras.initializers.VarianceScaling(scale = 2., mode='fan_out'),
                  kernel_regularizer = None,
                  use_biases = True,
                  biases_initializer  = tf.keras.initializers.Zeros(),
                  biases_regularizer = None,
-                 activation_fn = tf.nn.relu):
+                 activation_fn = None):
         super(FC, self).__init__()
         self.num_outputs = num_outputs
         self.kernel_initializer = kernel_initializer
@@ -148,12 +147,12 @@ class BatchNorm(tf.keras.layers.Layer):
                                         regularizer=self.param_regularizers.get('beta'))
             
     def EMA(self, variable, value):
-        update_delta = (variable - value) * self.alpha
+        update_delta = (variable - value) * (1-self.alpha)
         variable.assign(variable-update_delta)
         
     def call(self, input, training=None):
         if training:
-            mean, var = tf.nn.moments(input, list(range(len(input.get_shape())-1)))
+            mean, var = tf.nn.moments(input, list(range(len(input.get_shape())-1)), keepdims=True)
             stddev = tf.sqrt(var + self.epsilon)
             bn = (input-mean)/stddev
             self.EMA(self.moving_mean, mean)
@@ -167,12 +166,19 @@ class BatchNorm(tf.keras.layers.Layer):
         if self.activation_fn:
             bn = self.activation_fn(bn)
         return bn
-    
-    
-#@tf.custom_gradient
-#def custom_op(x):
-#    result = ... # do forward computation
-#    def custom_grad(dy):
-#        grad = ... # compute gradient
-#        return grad
-#    return result, custom_grad
+
+class Dropout(tf.keras.layers.Layer):
+    @arg_scope
+    def __init__(self, keep_prob = 0.5):
+        super(Dropout, self).__init__()
+        
+        self.keep_prob = keep_prob
+
+    def call(self, input, training = False):
+        if training:
+            noise = tf.keras.backend.random_uniform(input.shape, minval=-1., maxval=0.) + self.keep_prob
+            mask = noise >= 0.
+            input = tf.where(mask, input, tf.zeros_like(input))
+ 
+        return input
+
